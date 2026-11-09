@@ -6,6 +6,8 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 app.json.ensure_ascii = False  # כדי שעברית תוצג כמו שצריך ב-JSON
+app.json.compact = False       # JSON מסודר עם שורות ורווחים, קל לקרוא בדפדפן
+app.json.sort_keys = False     # לשמור על סדר השדות כמו שכתבנו
 PORT = 5001
 
 GEO_URL = "https://geocoding-api.open-meteo.com/v1/search"
@@ -63,7 +65,7 @@ def outfit(city):
     try:
         weather = get_weather(city)
         return jsonify({**weather, "wear": recommend_outfit(weather)})
-    except ValueError as e:
+    except (ValueError, requests.RequestException) as e:
         return jsonify({"error": str(e)}), 404
 
 
@@ -76,7 +78,7 @@ def trip():
         return jsonify({"error": "send ?cities=a,b,c"}), 400
     try:
         all_w = [get_weather(n.strip()) for n in cities.split(",")]
-    except ValueError as e:
+    except (ValueError, requests.RequestException) as e:
         return jsonify({"error": str(e)}), 404
 
     all_w.sort(key=lambda w: abs(w["temperature"] - 24))

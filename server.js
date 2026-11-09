@@ -4,6 +4,7 @@
 const express = require("express");
 const app = express();
 const PORT = 3000;
+app.set("json spaces", 2); // JSON מסודר עם שורות ורווחים, קל לקרוא בדפדפן
 
 const GEO_URL = "https://geocoding-api.open-meteo.com/v1/search";
 const WEATHER_URL = "https://api.open-meteo.com/v1/forecast";
